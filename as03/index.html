@@ -1,1 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alex Chen | Portfolio</title>
+<style>
+/* 字型（Google Fonts；若載入失敗會自動改用系統字型） */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
+/* ---------- 1. 變數：顏色與尺寸集中在這裡，之後改設計只要改這裡 ---------- */
+:root {
+  --nav-height: 68px;        /* 導覽列高度 */
+  --content-width: 1000px;   /* 內容區的最大寬度 */
+
+  --primary: #2b3a67;        /* 主色：深藍 */
+  --primary-dark: #1c2645;
+  --accent: #f4a261;         /* 強調色：暖橘 */
+  --text: #2d3142;
+  --text-light: #5f667a;
+
+  /* 各 Section 的背景色 */
+  --bg-about: #dde8f4;
+  --bg-projects: #e0efe5;
+  --bg-experience: #f6ebdc;
+  --bg-contact: #ebe3f3;
+
+  --radius: 16px;
+  --shadow: 0 12px 32px rgba(43, 58, 103, 0.1);
+}
+
+/* ---------- 2. 基本設定 ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;    /* padding 不會把元素寬度撐大 */
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 注意：這裡刻意「不」加 scroll-behavior: smooth，
+   平順捲動交給 JavaScript 處理，兩者同時開啟會互相干擾。 */
+
+body {
+  font-family: "Poppins", "Segoe UI", system-ui, -apple-system, "Noto Sans TC", sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: #fff;
+}
+
+a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- 3. 導覽列（固定在最上方） ---------- */
+.navbar {
+  position: fixed;           /* 固定在視窗上，不隨頁面捲動 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  z-index: 1000;             /* 疊在所有內容上方 */
+  transition: box-shadow 0.3s ease;
+}
+
+/* 往下捲動後加深陰影（由 JS 加上 .scrolled） */
+.navbar.scrolled {
+  box-shadow: 0 6px 20px rgba(28, 38, 69, 0.12);
+}
+
+/* 導覽列內容和下方 .content 對齊：同樣 90% 寬、最大 1000px、置中 */
+.nav-inner {
+  width: 90%;
+  max-width: var(--content-width);
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.brand span {
+  color: var(--accent);
+}
+
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 6px;
+}
+
+.nav-links a {
+  display: block;
+  padding: 8px 16px;
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* 目前所在區塊（由 JS 自動加上 .active） */
+.nav-links a.active {
+  color: var(--primary);
+  background: rgba(244, 162, 97, 0.22);
+}
+
+/* Hover 效果：背景變深藍、文字變白
+   （寫在 .active 後面，滑鼠移上去時才能蓋過 .active 的樣式） */
+.nav-links a:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* ---------- 4. Banner（首頁橫幅） ---------- */
+.banner {
+  position: relative;
+  width: 100%;               /* 橫跨整個瀏覽器寬度 */
+  min-height: 100vh;         /* 至少佔滿一個畫面高 */
+  padding: calc(var(--nav-height) + 60px) 0 100px;  /* 上方預留導覽列高度 */
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1c2645 0%, #2b3a67 55%, #41609a 100%);
+  color: #fff;
+  overflow: hidden;
+}
+
+/* 裝飾用的半透明圓形 */
+.banner::before,
+.banner::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.banner::before {
+  width: 440px;
+  height: 440px;
+  right: -140px;
+  top: -60px;
+  background: rgba(244, 162, 97, 0.18);
+}
+
+.banner::after {
+  width: 280px;
+  height: 280px;
+  left: -90px;
+  bottom: -90px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.banner-inner {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.banner-eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.banner h1 {
+  margin: 0 0 20px;
+  font-size: clamp(2.6rem, 7vw, 4.6rem);
+  line-height: 1.1;
+}
+
+.banner-text {
+  max-width: 560px;
+  margin: 0 0 36px;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.banner-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.25s ease, background-color 0.25s ease,
+    color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--primary-dark);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(244, 162, 97, 0.45);
+}
+
+.btn-outline {
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  color: #fff;
+}
+
+.btn-outline:hover {
+  background: #fff;
+  color: var(--primary);
+  transform: translateY(-3px);
+}
+
+/* 底部的向下箭頭 */
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.3rem;
+  text-decoration: none;
+  transform: translateX(-50%);
+  animation: bounce 2s infinite;
+  transition: background-color 0.25s ease;
+}
+
+.scroll-hint:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 8px); }
+}
+
+/* ---------- 5. Section 與 .content（寬度設計的重點） ---------- */
+/* Section：width 100%，背景色橫跨整個瀏覽器 */
+.section {
+  width: 100%;
+  padding: 90px 0;
+  scroll-margin-top: var(--nav-height);  /* JS 失效時的備用定位修正 */
+}
+
+.section-about      { background: var(--bg-about); }
+.section-projects   { background: var(--bg-projects); }
+.section-experience { background: var(--bg-experience); }
+.section-contact    { background: var(--bg-contact); }
+
+/* .content：白底，限制最大寬度並水平置中 */
+.content {
+  width: 90%;                       /* 小螢幕時左右各留 5% */
+  max-width: var(--content-width);  /* 大螢幕時不超過 1000px */
+  margin: 0 auto;                   /* 水平置中 */
+  padding: 56px 60px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content:hover {
+  box-shadow: 0 18px 40px rgba(43, 58, 103, 0.14);
+}
+
+.section-title {
+  position: relative;
+  margin: 0 0 14px;
+  padding-bottom: 14px;
+  font-size: 2rem;
+  line-height: 1.3;
+  color: var(--primary);
+}
+
+/* 標題下方的短線 */
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 56px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.section-intro {
+  max-width: 680px;
+  margin: 0 0 32px;
+  font-size: 1.05rem;
+  color: var(--text-light);
+}
+
+/* ---------- 6. About ---------- */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.about-text p {
+  margin: 0 0 16px;
+}
+
+.skill-box h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+.skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-list li {
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--bg-about);
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.skill-list li:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ---------- 7. Projects ---------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  padding: 28px 24px;
+  border: 1px solid #e6e9f0;
+  border-radius: 12px;
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: transparent;
+  box-shadow: 0 14px 30px rgba(43, 58, 103, 0.14);
+}
+
+.card-tag {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--bg-projects);
+  color: #2f6b45;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+/* ---------- 8. Experience（時間軸） ---------- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 28px;
+  border-left: 3px solid var(--bg-experience);
+}
+
+.timeline li {
+  position: relative;
+  padding: 0 0 32px 8px;
+}
+
+.timeline li:last-child {
+  padding-bottom: 0;
+}
+
+/* 時間軸上的圓點 */
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -41px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--accent);
+  transition: background-color 0.25s ease;
+}
+
+.timeline li:hover::before {
+  background: var(--accent);
+}
+
+.timeline .time {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #b0611c;
+}
+
+.timeline h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+}
+
+.timeline .org {
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.timeline p {
+  margin: 0;
+  color: var(--text-light);
+}
+
+/* ---------- 9. Contact ---------- */
+.contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 22px;
+  border-radius: 12px;
+  background: var(--bg-contact);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+.contact-item .label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a4c93;
+  transition: color 0.25s ease;
+}
+
+.contact-item .value {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.contact-item:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-4px);
+}
+
+.contact-item:hover .label {
+  color: var(--accent);
+}
+
+/* ---------- 10. Footer ---------- */
+.footer {
+  padding: 32px 20px;
+  background: var(--primary-dark);
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.footer p {
+  margin: 0 0 8px;
+}
+
+.footer a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- 11. 響應式設計（RWD） ---------- */
+/* 平板 */
+@media (max-width: 768px) {
+  .section {
+    padding: 64px 0;
+  }
+
+  .content {
+    padding: 36px 26px;
+  }
+
+  .section-title {
+    font-size: 1.65rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* 手機：導覽列改成上下兩排（Logo 一排、選單一排） */
+@media (max-width: 640px) {
+  :root {
+    --nav-height: 96px;
+  }
+
+  .nav-inner {
+    width: 100%;
+    padding: 0 8px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .brand {
+    font-size: 1.2rem;
+  }
+
+  .nav-inner nav {
+    width: 100%;
+  }
+
+  /* 選單太寬時可左右滑動，不會被切掉 */
+  .nav-links {
+    width: 100%;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 空間足夠時置中；不夠時從最左邊開始排 */
+  .nav-links li:first-child { margin-left: auto; }
+  .nav-links li:last-child  { margin-right: auto; }
+
+  .nav-links a {
+    padding: 6px 9px;
+    font-size: 0.82rem;
+  }
+
+  .content {
+    padding: 30px 20px;
+  }
+}
+
+/* 超小螢幕（例如 320px 寬的手機） */
+@media (max-width: 360px) {
+  .nav-links a {
+    padding: 5px 6px;
+    font-size: 0.76rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 導覽列：固定在畫面最上方 ===== -->
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="brand">Alex<span>.</span></a>
+    <nav aria-label="Main navigation">
+      <ul class="nav-links">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== Banner：首頁大橫幅 ===== -->
+<section class="banner" id="home">
+  <div class="banner-inner">
+    <p class="banner-eyebrow">Hello, I'm</p>
+    <h1>Alex Chen</h1>
+    <p class="banner-text">
+      A student web designer who enjoys turning ideas into clean,
+      friendly, and responsive web pages.
+    </p>
+    <div class="banner-buttons">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="#contact" class="btn btn-outline">Contact Me</a>
+    </div>
+  </div>
+  <a href="#about" class="scroll-hint" aria-label="Scroll to About">&#8595;</a>
+</section>
+
+<!-- ===== About ===== -->
+<section class="section section-about" id="about">
+  <div class="content">
+    <h2 class="section-title">About Me</h2>
+    <p class="section-intro">
+      I'm a university student exploring the space where design, data, and code meet.
+    </p>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I started learning web design so I could share my research in a way people
+          actually enjoy reading. Since then, I've been practicing layout, typography,
+          and interaction design using plain HTML, CSS, and JavaScript.
+        </p>
+        <p>
+          Outside of class, I like data visualization, street photography, and finding
+          a quiet café to work in.
+        </p>
+      </div>
+      <div class="skill-box">
+        <h3>Skills</h3>
+        <ul class="skill-list">
+          <li>HTML5</li>
+          <li>CSS3</li>
+          <li>JavaScript</li>
+          <li>Responsive Design</li>
+          <li>R</li>
+          <li>Figma</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Projects ===== -->
+<section class="section section-projects" id="projects">
+  <div class="content">
+    <h2 class="section-title">Projects</h2>
+    <p class="section-intro">
+      A few things I've built or studied recently. Hover over a card to see the effect.
+    </p>
+    <div class="card-grid">
+      <article class="card">
+        <span class="card-tag">Data Analysis</span>
+        <h3>PTT Discourse Study</h3>
+        <p>
+          Collected PTT posts and comments, then used sentiment classification and
+          word co-occurrence networks in R to trace how online framing changed over time.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card-tag">Web Design</span>
+        <h3>Single-page Portfolio</h3>
+        <p>
+          This page: a fixed navigation bar, full-width section backgrounds, and
+          smooth scrolling with offset correction.
+        </p>
+      </article>
+      <article class="card">
+        <span class="card-tag">Visualization</span>
+        <h3>Survey Dashboard</h3>
+        <p>
+          Turned survey results into clean, readable charts with consistent colors
+          and clear labels for a class presentation.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Experience ===== -->
+<section class="section section-experience" id="experience">
+  <div class="content">
+    <h2 class="section-title">Experience</h2>
+    <p class="section-intro">
+      Where I've been learning, working, and contributing.
+    </p>
+    <ol class="timeline">
+      <li>
+        <span class="time">2025 — Present</span>
+        <h3>Research Assistant <span class="org">· Communication Research Lab</span></h3>
+        <p>Collect and clean social media data, build charts, and summarize findings for weekly lab meetings.</p>
+      </li>
+      <li>
+        <span class="time">2024 — 2025</span>
+        <h3>Teaching Assistant <span class="org">· Intro to Web Design</span></h3>
+        <p>Helped classmates debug HTML and CSS, and prepared short practice exercises.</p>
+      </li>
+      <li>
+        <span class="time">Summer 2024</span>
+        <h3>Design Intern <span class="org">· Local Nonprofit</span></h3>
+        <p>Redesigned event flyers and updated content on the organization's website.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== Contact ===== -->
+<section class="section section-contact" id="contact">
+  <div class="content">
+    <h2 class="section-title">Contact</h2>
+    <p class="section-intro">
+      Have a question or want to work together? Feel free to reach out.
+      I usually reply within a few days.
+    </p>
+    <div class="contact-list">
+      <a class="contact-item" href="mailto:hello@example.com">
+        <span class="label">Email</span>
+        <span class="value">hello@example.com</span>
+      </a>
+      <a class="contact-item" href="https://github.com" target="_blank" rel="noopener noreferrer">
+        <span class="label">GitHub</span>
+        <span class="value">github.com</span>
+      </a>
+      <a class="contact-item" href="https://codepen.io" target="_blank" rel="noopener noreferrer">
+        <span class="label">CodePen</span>
+        <span class="value">codepen.io</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <p>&copy; 2026 Alex Chen. Built with HTML, CSS &amp; JavaScript.</p>
+  <a href="#home">Back to top &#8593;</a>
+</footer>
+
+<script>
+const navbar = document.getElementById("navbar");
+const navLinks = document.querySelectorAll(".nav-links a");
+const pageSections = document.querySelectorAll(".banner, .section");
+
+// 捲動動畫的時間（毫秒）：數字越大，捲得越慢
+const SCROLL_DURATION = 800;
+let scrollAnimation = null;
+
+/* ---------- 1. 緩動函式：先加速、再減速，讓動畫比較自然 ---------- */
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+/* ---------- 2. 平順捲動到指定的 Y 座標 ---------- */
+function smoothScrollTo(targetY) {
+  // 不能捲超過頁面最底端
+  const maxY = document.documentElement.scrollHeight - window.innerHeight;
+  targetY = Math.max(0, Math.min(targetY, maxY));
+
+  const startY = window.pageYOffset;
+  const distance = targetY - startY;
+  let startTime = null;
+
+  // 如果上一段動畫還沒結束，先停掉
+  stopScrollAnimation();
+
+  function step(currentTime) {
+    if (startTime === null) startTime = currentTime;
+    const progress = Math.min((currentTime - startTime) / SCROLL_DURATION, 1);
+
+    window.scrollTo(0, startY + distance * easeInOutCubic(progress));
+
+    if (progress < 1) {
+      scrollAnimation = requestAnimationFrame(step);
+    } else {
+      scrollAnimation = null;
+    }
+  }
+
+  scrollAnimation = requestAnimationFrame(step);
+}
+
+function stopScrollAnimation() {
+  if (scrollAnimation !== null) {
+    cancelAnimationFrame(scrollAnimation);
+    scrollAnimation = null;
+  }
+}
+
+// 動畫途中，使用者自己滾動滑鼠或觸控螢幕時，就停止自動捲動
+window.addEventListener("wheel", stopScrollAnimation, { passive: true });
+window.addEventListener("touchstart", stopScrollAnimation, { passive: true });
+
+/* ---------- 3. 計算目標位置（定位修正） ---------- */
+// 目標位置 = 區塊距離頁面頂端的距離 − 導覽列高度
+// 這樣區塊上緣會剛好停在導覽列下方，標題不會被蓋住
+function getTargetY(target) {
+  if (target.id === "home") return 0; // Home：回到最上方
+  const navHeight = navbar.offsetHeight; // 即時量測，手機版導覽列較高也能正確計算
+  return target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+}
+
+/* ---------- 4. 綁定所有頁內連結（href 以 # 開頭） ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+  link.addEventListener("click", function (event) {
+    const targetId = link.getAttribute("href");
+    if (targetId.length < 2) return; // 只有 "#" 的連結不處理
+
+    const target = document.querySelector(targetId);
+    if (!target) return; // 找不到對應區塊就維持瀏覽器預設行為
+
+    event.preventDefault(); // 取消原本「瞬間跳轉」的行為
+    smoothScrollTo(getTargetY(target));
+  });
+});
+
+/* ---------- 5. 捲動時更新導覽列狀態 ---------- */
+function updateNavbar() {
+  const scrollY = window.pageYOffset;
+  const navHeight = navbar.offsetHeight;
+
+  // 離開頁面頂端後，導覽列加上陰影
+  navbar.classList.toggle("scrolled", scrollY > 10);
+
+  // 找出目前畫面所在的區塊
+  let currentId = "home";
+  pageSections.forEach(function (section) {
+    const sectionTop = section.offsetTop - navHeight - window.innerHeight * 0.3;
+    if (scrollY >= sectionTop) currentId = section.id;
+  });
+
+  // 捲到最底時，標示最後一個區塊（Contact）
+  if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
+    currentId = pageSections[pageSections.length - 1].id;
+  }
+
+  navLinks.forEach(function (link) {
+    link.classList.toggle("active", link.getAttribute("href") === "#" + currentId);
+  });
+}
+
+window.addEventListener("scroll", updateNavbar);
+window.addEventListener("resize", updateNavbar);
+updateNavbar();
+</script>
+</body>
+</html>
